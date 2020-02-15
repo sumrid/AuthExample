@@ -1,28 +1,19 @@
-const router = require('express').Router();
-const basicAuth = require('express-basic-auth');
-const jwt = require('jsonwebtoken');
-const express = require('express');
-const auth = require('./auth');
+import { Router, Response, Request } from 'express';
+import basicAuth from 'express-basic-auth';
+import jwt from 'jsonwebtoken';
+import auth from './auth';
+
+const router = Router();
 
 router.post('/login', login);
 router.get('/basic', basicAuth({ authorizer: auth.basic }), hello);
 router.get('/jwt', auth.jwtAuth, hello);
 
-/**
- * Simple response
- * @param {express.request} req 
- * @param {express.response} res 
- */
-function hello(req, res) {
+function hello(req: Request, res: Response) {
     res.json({ status: 'OK', message: "Hello World!" });
 }
 
-/**
- * Login and return JWT
- * @param {express.request} req 
- * @param {express.response} res 
- */
-function login(req, res) {
+function login(req: Request, res: Response) {
     const username = req.body.username;
     const password = req.body.password;
 
@@ -39,6 +30,5 @@ function login(req, res) {
     const token = jwt.sign(payload, SECRET); // ออก token
     res.json({ jwt: token });
 }
-
 
 module.exports = router;
